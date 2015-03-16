@@ -6,7 +6,7 @@ A simple wrapper to the [Winston](https://github.com/winstonjs/winston) logger t
 ## Install
 
 This is not currently publish in npm so needs to be installed from the git repo
-`npm install https://github.com/naddison36/logger.git`
+```npm install https://github.com/naddison36/logger.git```
 
 ## Usage
 
@@ -33,15 +33,27 @@ For example, a logger.yaml config file would look like
 ---
   # either trace, debug, info, warn or error
   logLevel: "info"
-
   loggly:
     enable: true
-    subdomain: 'yourLogglySubDomain'
-    inputToken: 'yourLogglyToken'
-    noLogglyOnOsPlatform: 'darwin'
+    subdomain: yourLogglySubDomain
+    inputToken: yourLogglyToken
+    noLogglyOnOsPlatform: darwin
 ```
 
-See the config's [Configuration Files](https://github.com/lorenwest/node-config/wiki/Configuration-Files) doco for more information
+A logger.json config file would look like
+```json
+{
+  "logLevel": "info",
+  "loggly": {
+    "enable": true,
+    "inputToken": "yourLogglyToken",
+    "subdomain": "yourLogglySubDomain",
+    "noLogglyOnOsPlatform": "darwin"
+  }
+}
+```
+
+See the config's [Configuration Files](https://github.com/lorenwest/node-config/wiki/Configuration-Files) doco for more information.
 
 ### Environment instances
 The NODE_APP_INSTANCE environment variable allows for different versions of your logger to run in different environments.
@@ -54,4 +66,9 @@ If NODE_APP_INSTANCE is not set a logger.EXT file will be loaded
 The configuration in the config file can be overridden with the NODE_CONFIG environment variable. eg the following will override the logLevel in the config file to debug
 `NODE_CONFIG='{"logLevel":"debug"}'`
 
-see config's [Environment Variable](https://github.com/lorenwest/node-config/wiki/Environment-Variables) doco for more info
+See config's [Environment Variable](https://github.com/lorenwest/node-config/wiki/Environment-Variables) doco for more info
+
+## Loggly
+The subdomain is the Loggly account subdomain that was created on signup. The input token is the Loggly [customer token](https://www.loggly.com/docs/customer-token-authentication-token/).
+
+The noLogglyOnOsPlatform config allows an operating system platform not to use Loggly. For example, you might not want to use Loggly for your local development. If you are developing on a Mac OSX then the noLogglyOnOsPlatform config would be 'darwin'. Windows will be 'win32' and Linux will be 'linux'.
