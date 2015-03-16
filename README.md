@@ -47,7 +47,7 @@ A logger.json config file would look like
   "logLevel": "info",
   "loggly": {
     "inputToken": "yourLogglyToken",
-    "subdomain": "yourLogglySubDomain"
+    "subdomain": "yourLogglySubDomain",
     "tag": "yourTag"
   }
 }
