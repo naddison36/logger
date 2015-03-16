@@ -63,23 +63,18 @@ function getLogLevels(loggerConfig)
 
 function addLoggly(logLevel)
 {
-    // if no Loggly configuration or not enable then return
-    if (!loggerConfig.loggly || !loggerConfig.loggly.enable) return;
+    // if no Loggly configuration then return
+    if (!loggerConfig.loggly || !loggerConfig.loggly.subdomain || !loggerConfig.loggly.inputToken) return;
 
-    // if the process is running on a operating system platform configured in loggly.noLogglyOnOsPlatform then don't add loggly to config
-    // This allows local processes not to use loggly. eg processing running on Mac OSX have a platform name of "darwin"
-    if (os.platform() !== loggerConfig.loggly.noLogglyOnOsPlatform )
-    {
-        // configure Loggly settings
-        var logglyOptions = {
-            level: logLevel,
-            subdomain: loggerConfig.loggly.subdomain,
-            inputToken: loggerConfig.loggly.inputToken,
-            json: false,
-            tag: loggerConfig.loggly.tag || 'logger'
-        };
+    // configure Loggly settings
+    var logglyOptions = {
+        level: logLevel,
+        subdomain: loggerConfig.loggly.subdomain,
+        inputToken: loggerConfig.loggly.inputToken,
+        json: false,
+        tag: loggerConfig.loggly.tag || 'logger'
+    };
 
-        // add Loggly to logger
-        logger.add(Loggly, logglyOptions);
-    }
+    // add Loggly to logger
+    logger.add(Loggly, logglyOptions);
 }
