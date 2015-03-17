@@ -69,7 +69,9 @@ A logger.json config file would look like
 
 See the config's [Configuration Files](https://github.com/lorenwest/node-config/wiki/Configuration-Files) doco for more information.
 
-### Environment instances
+## Environment Variables
+
+### NODE_APP_INSTANCE
 Common configuration can be placed in the logger.EXT config file and then environment specific config in logger-{environment}.EXT files.
 
 The NODE_APP_INSTANCE environment variable sets which environment config file will be loaded after the logger.EXT file is loaded.
@@ -84,6 +86,9 @@ NODE_CONFIG='{"logLevel":"debug"}'
 ```
 
 See config's [Environment Variable](https://github.com/lorenwest/node-config/wiki/Environment-Variables) doco for more info.
+
+### NODE_CONFIG_DIR
+Used to set the location of your logger configuration files. This can be a relative path from the working directory or a direct path from root.
 
 ## Levels
 You can configure your own levels rather than using the default wiston levels of: silly, debug, verbose, info, warn and error. You can also configure the color of the logged message for each level.
