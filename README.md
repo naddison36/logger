@@ -5,15 +5,12 @@ A simple wrapper to the [Winston](https://github.com/winstonjs/winston) logger t
 
 ## Install
 
-This is not currently publish in npm so needs to be installed from the git repo
-```
-npm install https://github.com/naddison36/logger.git
-```
+`npm install config-logger`
 
 ## Usage
 
 ```javascript
-var logger = require('logger');
+var logger = require('config-logger');
 
 // log the stack of an Error object
 var err = new Error('something really bad happened');

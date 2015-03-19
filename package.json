@@ -1,6 +1,6 @@
 {
-  "name": "Logger",
-  "version": "0.0.1",
+  "name": "config-logger",
+  "version": "0.0.2",
   "description": "A configurable Winston logger",
   "main": "index.js",
   "dependencies": {
