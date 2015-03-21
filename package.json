@@ -5,8 +5,7 @@
   "main": "index.js",
   "dependencies": {
     "config": "~1.12.0",
-    "winston": "~0.9.0",
-    "winston-loggly": "~1.0.4"
+    "winston": "~0.9.0"
   },
   "keywords": [
     "logger",

@@ -1,5 +1,4 @@
 var winston = require('winston'),
-    Loggly = require('winston-loggly').Loggly,
     os = require('os'),
     config = require('config');
 
@@ -25,19 +24,18 @@ var loggerConfig = config.util.loadFileConfigs();
 process.env.NODE_ENV = original_NODE_ENV;
 
 // default the log level if it's not set in the config file or NODE_CONFIG environment variable. eg NODE_CONFIG='{"logLevel":"debug"}'
-var logLevel = loggerConfig.logLevel || "warn";
+var globalLogLevel = loggerConfig.logLevel || "warn";
 
 var logLevels = getLogLevels(loggerConfig);
 
 // instantiate a winston logger with console output
 var logger = module.exports = new (winston.Logger)({
-    levels: logLevels,
-    transports: [
-      new (winston.transports.Console)({level: logLevel, colorize: true})
-    ]
+    levels: logLevels
 });
 
-addLoggly(logLevel);
+addStandardTransports(loggerConfig, globalLogLevel);
+
+addAdditionalTransports(loggerConfig, globalLogLevel);
 
 function getLogLevels(loggerConfig)
 {
@@ -61,20 +59,69 @@ function getLogLevels(loggerConfig)
     }
 }
 
-function addLoggly(logLevel)
+function addTransport(transport, transportConfig, globalLevel)
 {
-    // if no Loggly configuration then return
-    if (!loggerConfig.loggly || !loggerConfig.loggly.subdomain || !loggerConfig.loggly.inputToken) return;
+    // if no transport config or has been explicitly disabled then do not add transport to logger
+    if (!transport || !transportConfig || transportConfig.disable) return;
 
-    // configure Loggly settings
-    var logglyOptions = {
-        level: logLevel,
-        subdomain: loggerConfig.loggly.subdomain,
-        inputToken: loggerConfig.loggly.inputToken,
-        json: false,
-        tag: loggerConfig.loggly.tag || 'logger'
-    };
+    // default transport log level to global level if not explicitly set in the transport config
+    if (!transportConfig.level) transportConfig.level = globalLevel;
 
-    // add Loggly to logger
-    logger.add(Loggly, logglyOptions);
+    // add transport to logger
+    logger.add(transport, transportConfig);
+}
+
+function addStandardTransports(loggerConfig, globalLogLevel)
+{
+    // by default the console logger will be used - even if there is no console configuration
+    // the console logger can be explicitly disabled with the console.disable flag in the logger configuration
+    if (!loggerConfig.console) loggerConfig.console = {};
+
+    addTransport(winston.transports.Console, loggerConfig.console, globalLogLevel);
+
+    // load standard file transports if configuration exists
+    if (loggerConfig.file && loggerConfig.file.datePattern)
+    {
+        // datePattern config exists so using DailyRotateFile transport
+        addTransport(winston.transports.DailyRotateFile, loggerConfig.file, globalLogLevel);
+    }
+    else
+    {
+        // no datePattern config exists so using File transport
+        addTransport(winston.transports.File, loggerConfig.file, globalLogLevel);
+    }
+
+    addTransport(winston.transports.Http, loggerConfig.http, globalLogLevel);
+}
+
+// load non standard transports if configuration exists
+function addAdditionalTransports(loggerConfig, globalLogLevel)
+{
+    if (loggerConfig.loggly)
+    {
+        var Loggly = require('winston-loggly').Loggly;
+        addTransport(Loggly, loggerConfig.loggly, globalLogLevel);
+    }
+
+    if (loggerConfig.mongodb)
+    {
+        var MongoDB = require('winston-mongodb').MongoDB;
+        addTransport(MongoDB, loggerConfig.mongodb, globalLogLevel);
+    }
+
+    if (loggerConfig.couchdb)
+    {
+        var CouchDB = require('winston-couchdb').CouchDB;
+        addTransport(CouchDB, loggerConfig.couchdb, globalLogLevel);
+    }
+
+    if (loggerConfig.redis)
+    {
+        addTransport(winston.transports.Redis, loggerConfig.redis, globalLogLevel);
+    }
+
+    if (loggerConfig.riak)
+    {
+        addTransport(winston.transports.Riak, loggerConfig.riak, globalLogLevel);
+    }
 }

@@ -1,7 +1,7 @@
 A configurable Winston logger
 ===============
 
-A simple wrapper to the [Winston](https://github.com/winstonjs/winston) logger that allows the log level and optional [Loggly](https://www.loggly.com/) configuration to be done in a configuration file using [node-config](https://github.com/lorenwest/node-config).
+A simple wrapper to the [Winston](https://github.com/winstonjs/winston) logger that allows options to be configured using [node-config](https://github.com/lorenwest/node-config).
 
 ## Install
 
@@ -18,13 +18,22 @@ logger.error(err.stack);
 
 // two different logger calls to achieve the same result
 logger.info('some interesting stuff just happened');
-logger.level('info', 'exactly the same stuff just called a different way');
+logger.level('info', 'some interesting stuff just happened');
 ```
 
 See [Winston doco](https://github.com/winstonjs/winston#logging) for more info
 
+## Design Principles
+
+* logger options can be configured via configuration files or environment variables
+* allow for environment specific configurations
+* default console logger available after install without any configuration
+* custom log levels can be set. eg trace, debug, info, warn and error
+* logger transports can be explicitly enabled or disabled in configuration
+* all logger transport options can be controlled through configuration
+
 ## Config
-The logger will work without a configuration file. The default logging level will be set to "warn" with the following default logging levels of: silly, debug, verbose, info, warn and error.
+The logger will work without a configuration file. The default logging level will be set to "warn" with the following logging levels of: silly, debug, verbose, info, warn and error.
 
 To override the default logger configuration create a logger config file in your ./config directory in either .yml, .yaml, .coffee, .cson, .properties, .json, .json5, .hjson or .js formats.
 Note the config file needs to be in your project's home folder and not in the logger module.
@@ -33,33 +42,25 @@ For example, a logger.yaml config file would look like
 ```yaml
 ---
   # either trace, debug, info, warn or error
-  logLevel: "info"
+  logLevel: info
   levels:
     trace: 0
     debug: 1
     info: 2
     warn: 3
     error: 4
-  colors:
-    trace: grey
-    debug: blue
-    info: yellow
-    warn: orange
-    error: red
-  loggly:
-    subdomain: yourLogglySubDomain
-    inputToken: yourLogglyToken
-    tag: yourTag
 ```
 
 A logger.json config file would look like
 ```json
 {
-  "logLevel": "info",
-  "loggly": {
-    "inputToken": "yourLogglyToken",
-    "subdomain": "yourLogglySubDomain",
-    "tag": "yourTag"
+  "logLevel": "error",
+  "levels": {
+    "debug": 1,
+    "info": 2,
+    "warn": 3,
+    "trace": 0,
+    "error": 4
   }
 }
 ```
@@ -93,9 +94,75 @@ You can configure your own levels rather than using the default wiston levels of
 ## Colors
 Different colors can be configured for each logging level in the console output.
 
-## Loggly
+## Winston Transports
+
+### Console
+By default the console transport will be used even if there is no logger configuration. The console options can be controlled in the console configuration property.
+
+A yaml example:
+```yaml
+---
+  console:
+    timestamp: true
+```
+
+The console transport can be explicityly diabled with the disable propoerty. A json example:
+```json
+{
+  "console": {
+    "disable": true
+  }
+}
+```
+
+To disable any console configuration in config files using an envirnment variable:
+```
+NODE_CONFIG='{"console":{"disable":true}}'
+```
+
+See the [Winston Console Transport](https://github.com/winstonjs/winston/blob/master/docs/transports.md#console-transport) documentation for a complete list of options.
+
+### File
+The file property configures the [Winston File Transport](https://github.com/winstonjs/winston/blob/master/docs/transports.md#file-transport). eg filename to write the logger output to.
+
+If the dataPattern property is set in the file property then the [Winston DailyRotateFile Transport](https://github.com/winstonjs/winston/blob/master/docs/transports.md#dailyrotatefile-transport) is used instead. This will rotate files to the configured time period. Note the DailyRotateFile name is missleading as it can do more than daily file rotations.
+
+A yaml example:
+```yaml
+---
+  file:
+    level: warn
+    filename: ./logs/logger
+    json: false
+    timestamp: true
+    datePattern: ".yyyy-MM-dd-HH'
+```
+
+
+## Adding other Winston transports
+Additional transports like [Winston Loggly Transport](https://github.com/winstonjs/winston/blob/master/docs/transports.md#loggly-transport), [CouchDB](https://github.com/winstonjs/winston/blob/master/docs/transports.md#couchdb-transport), [MongoDB](https://github.com/winstonjs/winston/blob/master/docs/transports.md#mongodb-transport) and [Redis](https://github.com/winstonjs/winston/blob/master/docs/transports.md#redis-transport) can be used but they are no included in the logger's package.json by default. To use these transports make sure you add them to your package.json dependencies.
+
+### Loggly
+The loggly property configures the [Winston Loggly Transport](https://github.com/winstonjs/winston/blob/master/docs/transports.md#loggly-transport).
+
 The subdomain is the Loggly account subdomain that was created on signup. The input token is the Loggly [customer token](https://www.loggly.com/docs/customer-token-authentication-token/).
 
-You can add metadata to Loggly with the [tag](https://www.loggly.com/docs/tags/) config. If not defined it will default to logger.
+If you don't want to log to Loggly then just don't include the loggly property in the configuration.
 
-If you don't want to log to Loggly then just don't include the Loggly config.
+Example Loggly configuration file in yaml
+```yaml
+---
+  loggly:
+    subdomain: yourLogglySubDomain
+    inputToken: yourLogglyToken
+```
+
+A logger.json config file would look like
+```json
+{
+  "loggly": {
+    "inputToken": "yourLogglyToken",
+    "subdomain": "yourLogglySubDomain"
+  }
+}
+```
