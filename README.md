@@ -139,7 +139,8 @@ A yaml example:
 ```
 
 ## Adding other Winston transports
-Additional winston transports like [Loggly](https://github.com/winstonjs/winston/blob/master/docs/transports.md#loggly-transport), [CouchDB](https://github.com/winstonjs/winston/blob/master/docs/transports.md#couchdb-transport), [MongoDB](https://github.com/winstonjs/winston/blob/master/docs/transports.md#mongodb-transport) and [Redis](https://github.com/winstonjs/winston/blob/master/docs/transports.md#redis-transport) can be used but they are no included in the logger's package.json by default. To use these transports make sure you add them to your package.json dependencies.
+Additional winston transports like [Loggly](https://github.com/winstonjs/winston/blob/master/docs/transports.md#loggly-transport), [CouchDB](https://github.com/winstonjs/winston/blob/master/docs/transports.md#couchdb-transport), [MongoDB](https://github.com/winstonjs/winston/blob/master/docs/transports.md#mongodb-transport) and [Redis](https://github.com/winstonjs/winston/blob/master/docs/transports.md#redis-transport) can be used but they are not included in the logger's package.json by default.
+To use these transports make sure you add them to your package.json dependencies.
 
 ### Loggly
 The loggly property configures the [Winston Loggly Transport](https://github.com/winstonjs/winston/blob/master/docs/transports.md#loggly-transport).
@@ -164,4 +165,12 @@ A logger.json config file would look like
     "subdomain": "yourLogglySubDomain"
   }
 }
+```
+
+The following should be added to the dependencies in the package.json to use the Loggly transport
+```json
+    "dependencies": {
+        "config-logger": "~0.0.4",
+        "winston-loggly": "~1.0.4"
+    }
 ```
