@@ -138,9 +138,8 @@ A yaml example:
     datePattern: ".yyyy-MM-dd-HH'
 ```
 
-
 ## Adding other Winston transports
-Additional transports like [Winston Loggly Transport](https://github.com/winstonjs/winston/blob/master/docs/transports.md#loggly-transport), [CouchDB](https://github.com/winstonjs/winston/blob/master/docs/transports.md#couchdb-transport), [MongoDB](https://github.com/winstonjs/winston/blob/master/docs/transports.md#mongodb-transport) and [Redis](https://github.com/winstonjs/winston/blob/master/docs/transports.md#redis-transport) can be used but they are no included in the logger's package.json by default. To use these transports make sure you add them to your package.json dependencies.
+Additional winston transports like [Loggly](https://github.com/winstonjs/winston/blob/master/docs/transports.md#loggly-transport), [CouchDB](https://github.com/winstonjs/winston/blob/master/docs/transports.md#couchdb-transport), [MongoDB](https://github.com/winstonjs/winston/blob/master/docs/transports.md#mongodb-transport) and [Redis](https://github.com/winstonjs/winston/blob/master/docs/transports.md#redis-transport) can be used but they are no included in the logger's package.json by default. To use these transports make sure you add them to your package.json dependencies.
 
 ### Loggly
 The loggly property configures the [Winston Loggly Transport](https://github.com/winstonjs/winston/blob/master/docs/transports.md#loggly-transport).
